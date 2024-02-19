@@ -1,4 +1,4 @@
-import { Form, useLoaderData } from "react-router-dom";
+import { Form, useFetcher, useLoaderData } from "react-router-dom";
 
 const Contact = () => {
   const { contact } = useLoaderData();
@@ -35,7 +35,15 @@ const Contact = () => {
           <Form action="edit">
             <button type="submit">Edit</button>
           </Form>
-          <Form>
+          <Form
+            method="post"
+            action="destroy"
+            onSubmit={(event) => {
+              if (!confirm("Please confirm you want to delete this record.")) {
+                event.preventDefault();
+              }
+            }}
+          >
             <button type="submit">Delete</button>
           </Form>
         </div>
@@ -45,10 +53,15 @@ const Contact = () => {
 };
 
 function Favorite({ contact }) {
+  const fetcher = useFetcher();
+
   let favorite = contact.favorite;
+  if (fetcher.formData) {
+    favorite = fetcher.formData.get("favorite") === "true";
+  }
 
   return (
-    <form method="post">
+    <fetcher.Form method="post">
       <button
         name="favorite"
         value={favorite ? "false" : "true"}
@@ -56,7 +69,7 @@ function Favorite({ contact }) {
       >
         {favorite ? "★" : "☆"}
       </button>
-    </form>
+    </fetcher.Form>
   );
 }
 

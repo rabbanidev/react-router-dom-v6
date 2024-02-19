@@ -9,9 +9,12 @@ import Contact from "./pages/Contact";
 import { getContactLoader, getContactsLoader } from "./loaders/contactLoader";
 import {
   createContactAction,
+  deleteContactAction,
   updateContactAction,
+  updateContactFavouriteAction,
 } from "./actions/contactAction";
 import EditContact from "./pages/EditContact";
+import Index from "./pages/Index";
 
 const router = createBrowserRouter([
   {
@@ -22,15 +25,29 @@ const router = createBrowserRouter([
     action: createContactAction,
     children: [
       {
-        path: "contacts/:contactId",
-        element: <Contact />,
-        loader: getContactLoader,
-      },
-      {
-        path: "contacts/:contactId/:edit",
-        element: <EditContact />,
-        loader: getContactLoader,
-        action: updateContactAction,
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            index: true,
+            element: <Index />,
+          },
+          {
+            path: "contacts/:contactId",
+            element: <Contact />,
+            loader: getContactLoader,
+            action: updateContactFavouriteAction,
+          },
+          {
+            path: "contacts/:contactId/edit",
+            element: <EditContact />,
+            loader: getContactLoader,
+            action: updateContactAction,
+          },
+          {
+            path: "contacts/:contactId/destroy",
+            action: deleteContactAction,
+          },
+        ],
       },
     ],
   },
